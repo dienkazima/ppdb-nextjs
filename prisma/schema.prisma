@@ -1,0 +1,309 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Pendaftar {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  status String @default("Menunggu")
+  noPendaftaran String? @unique
+
+  // DATA SISWA
+  jenjang           String
+  nama              String
+  jenisKelamin      String
+  tempatLahir       String
+  tanggalLahir      DateTime
+  nik               String
+
+  anakKe            Int?
+  jumlahSaudara     Int?
+  agama             String?
+  tinggiBadan       Float?
+  beratBadan        Float?
+
+  alamat            String?
+  dusun             String?
+  desa              String?
+  kecamatan         String?
+  kabupaten         String?
+  noHpOrtu          String?
+  sekolahAsal       String?
+  transportasi      String?
+
+  // DATA AYAH
+  namaAyah          String?
+  tempatLahirAyah   String?
+  alamatAyah        String?
+  tahunLahirAyah    Int?
+  pendidikanAyah    String?
+  pekerjaanAyah     String?
+  penghasilanAyah   String?
+
+  // DATA IBU
+  namaIbu           String?
+  tempatLahirIbu    String?
+  alamatIbu         String?
+  tahunLahirIbu     Int?
+  pendidikanIbu     String?
+  pekerjaanIbu      String?
+  penghasilanIbu    String?
+
+  ijazah String?
+  kk     String?
+  akta   String?
+  ktp    String?
+
+  statusPembayaran    String   @default("Belum Bayar")
+  // statusPembayaran: "Belum Bayar" | "Menunggu Verifikasi" | "Cicilan" | "Lunas" | "Ditolak"
+  buktiPembayaran     String?  // kept for backward compat (last upload)
+  nominal             Float?   // kept for backward compat (last upload nominal)
+  metodePembayaran    String?  // kept for backward compat
+  catatanPenolakan    String?
+  tanggalVerifikasi   String?
+  totalTagihan        Float?   // auto-calculated from BiayaPendidikan
+  totalDibayar        Float?   // sum of verified RiwayatPembayaran
+
+  riwayatPembayaran   RiwayatPembayaran[]
+}
+
+model RiwayatPembayaran {
+  id                  String   @id @default(cuid())
+  pendaftarId         String
+  nomorCicilan        Int      @default(1)
+  nominal             Float
+  metodePembayaran    String?
+  buktiPembayaran     String?
+  statusPembayaran    String   @default("Menunggu Verifikasi")
+  // statusPembayaran: "Menunggu Verifikasi" | "Diverifikasi" | "Ditolak"
+  catatanPenolakan    String?
+  catatan             String?
+  tanggalVerifikasi   String?
+  createdAt           DateTime @default(now())
+
+  pendaftar           Pendaftar @relation(fields: [pendaftarId], references: [id], onDelete: Cascade)
+}
+
+model MetodePembayaran {
+  id            String   @id @default(cuid())
+  namaBank      String   
+  nomorRekening String
+  atasNama      String
+  instruksi     String?
+  kategori      String   @default("BANK") // "BANK" atau "E-WALLET"
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Gallery {
+  id        String   @id @default(cuid())
+  title     String
+  category  String
+  imageUrl  String
+  createdAt DateTime @default(now())
+}
+
+model JenjangPendidikan {
+  id          String   @id @default(cuid())
+  nama        String
+  deskripsi   String
+  icon        String   
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  persyaratan Persyaratan[]
+  biaya       Biaya[]
+  target      Target[]
+  guru        TenagaPendidik[]
+}
+
+model Persyaratan {
+  id                  String   @id @default(cuid())
+  jenjangPendidikanId String
+  deskripsi           String
+  isImportant         Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  jenjangPendidikan   JenjangPendidikan @relation(fields: [jenjangPendidikanId], references: [id], onDelete: Cascade)
+}
+
+model Biaya {
+  id                  String   @id @default(cuid())
+  jenjangPendidikanId String
+  nama                String
+  nominal             Float
+  keterangan          String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  jenjangPendidikan   JenjangPendidikan @relation(fields: [jenjangPendidikanId], references: [id], onDelete: Cascade)
+}
+
+model Target {
+  id                  String   @id @default(cuid())
+  jenjangPendidikanId String
+  deskripsi           String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  jenjangPendidikan   JenjangPendidikan @relation(fields: [jenjangPendidikanId], references: [id], onDelete: Cascade)
+}
+
+model TenagaPendidik {
+  id                  String   @id @default(cuid())
+  jenjangPendidikanId String
+  nama                String
+  jabatan             String
+  foto                String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  jenjangPendidikan   JenjangPendidikan @relation(fields: [jenjangPendidikanId], references: [id], onDelete: Cascade)
+}
+
+model Pengaturan {
+  id                String   @id @default("1")
+  bukaPendaftaran   Boolean  @default(true)
+  jenjangTerbuka    String   @default("TK,SD,SMP,SMA")
+  modeTahunAjaran   String   @default("AUTO")
+  tahunAjaranManual String?
+  updatedAt         DateTime @updatedAt
+}
+
+model AlurPendaftaran {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  icon      String
+  urutan    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TimelinePenerimaan {
+  id        String   @id @default(cuid())
+  date      String
+  event     String
+  status    String   
+  urutan    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FaqPendaftaran {
+  id        String   @id @default(cuid())
+  q         String
+  a         String
+  urutan    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PersyaratanDaftar {
+  id          String   @id @default(cuid())
+  teks        String
+  isImportant Boolean  @default(false)
+  urutan      Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model VisiSekolah {
+  id        String   @id @default("1")
+  konten    String
+  updatedAt DateTime @updatedAt
+}
+
+model MisiSekolah {
+  id        String   @id @default(cuid())
+  teks      String
+  urutan    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TujuanSekolah {
+  id        String   @id @default(cuid())
+  teks      String
+  urutan    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProfilYayasan {
+  id              String   @id @default("1")
+  deskripsi       String
+  embedMap        String
+  nomorWa         String
+  updatedAt       DateTime @updatedAt
+}
+
+model JamPelayanan {
+  id        String   @id @default(cuid())
+  hari      String
+  jam       String
+  urutan    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model KontakPanitia {
+  id        String   @id @default(cuid())
+  nama      String
+  nomor     String
+  urutan    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BiayaPendidikan {
+  id              String   @id @default(cuid())
+  jenisPembayaran String
+  uraian          String?
+  tkLk            Int?
+  tkPr            Int?
+  sdLk            Int?
+  sdPr            Int?
+  smpLk           Int?
+  smpPr           Int?
+  smaLk           Int?
+  smaPr           Int?
+  keterangan      String?
+  urutan          Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model CatatanBiayaPendidikan {
+  id        String   @id @default(cuid())
+  isi       String
+  urutan    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  name      String
+  password  String   
+  role      String   @default("PANITIA") // "ADMIN" atau "PANITIA"
+  jenjang   String?  // Untuk panitia, berisi jenjang misalnya "SD"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TataTertib {
+  id        String   @id @default(cuid())
+  teks      String
+  urutan    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

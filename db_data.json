@@ -1,0 +1,60 @@
+{
+  "jenjangs": [
+    {
+      "nama": "PAUD/TK"
+    },
+    {
+      "nama": "SD/MI"
+    },
+    {
+      "nama": "SMP/Mts"
+    },
+    {
+      "nama": "SMA/MA"
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "role": "ADMIN",
+      "jenjang": null
+    },
+    {
+      "username": "Hustina",
+      "role": "PANITIA",
+      "jenjang": "TK"
+    },
+    {
+      "username": "Muliani",
+      "role": "PANITIA",
+      "jenjang": "SMP"
+    },
+    {
+      "username": "Pawazah",
+      "role": "PANITIA",
+      "jenjang": "SD"
+    },
+    {
+      "username": "Dien",
+      "role": "PANITIA",
+      "jenjang": "SMA"
+    }
+  ],
+  "pendaftars": [
+    {
+      "id": "cmnhgjt3v00006r8tz4xpc1d3",
+      "nama": "Sakduddin",
+      "jenjang": "PAUD/TK"
+    },
+    {
+      "id": "cmni4j7vt000014d5ulmb649r",
+      "nama": "andi",
+      "jenjang": "SD/MI"
+    },
+    {
+      "id": "cmni4mrep000114d54g2ir1ix",
+      "nama": "dona",
+      "jenjang": "SMP/Mts"
+    }
+  ]
+}
