@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
-
-const prisma = new PrismaClient() as any;
 
 const MODELS: Record<string, string> = {
   "alur": "alurPendaftaran",
@@ -18,7 +16,7 @@ export async function GET(req: Request, context: { params: Promise<{ slug: strin
   if (!modelName) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   try {
-    const data = await prisma[modelName].findMany({ orderBy: { urutan: "asc" } });
+    const data = await (prisma as any)[modelName].findMany({ orderBy: { urutan: "asc" } });
     return NextResponse.json(data);
   } catch (error: any) {
     return NextResponse.json({ error: "Failed to fetch data", details: error.message }, { status: 500 });
@@ -32,7 +30,7 @@ export async function POST(req: Request, context: { params: Promise<{ slug: stri
 
   try {
     const json = await req.json();
-    const data = await prisma[modelName].create({ data: json });
+    const data = await (prisma as any)[modelName].create({ data: json });
     return NextResponse.json(data);
   } catch (error: any) {
     return NextResponse.json({ error: "Failed to create data", details: error.message }, { status: 500 });

@@ -10,9 +10,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Tidak ada file" }, { status: 400 });
     }
 
-    // Validasi tipe file PDF
-    if (file.type !== "application/pdf") {
-      return NextResponse.json({ error: "File harus berupa PDF" }, { status: 400 });
+    // Validasi tipe file: PDF atau Gambar
+    const allowedTypes = ["application/pdf", "image/jpeg", "image/jpg", "image/png"];
+    if (!allowedTypes.includes(file.type)) {
+      return NextResponse.json({ error: "File harus berupa PDF, JPG, atau PNG" }, { status: 400 });
     }
 
     // Validasi ukuran maks 2MB

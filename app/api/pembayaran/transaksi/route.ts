@@ -19,46 +19,41 @@ export async function GET(req: Request) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    let whereClause = `statusPembayaran != 'Belum Bayar'`;
+    // 1. Ambil pendaftar
+    const whereCondition: any = {
+      statusPembayaran: { not: 'Belum Bayar' }
+    };
     if (session.role === "PANITIA" && session.jenjang) {
-      whereClause += ` AND jenjang LIKE '%${session.jenjang}%'`;
+      whereCondition.jenjang = { contains: session.jenjang };
     }
 
-    // Ambil semua pendaftar yang sudah pernah upload
-    const pendaftarList: any[] = await prisma.$queryRawUnsafe(`
-      SELECT
-        id, nama, noPendaftaran, jenjang, jenisKelamin,
-        statusPembayaran, buktiPembayaran, createdAt,
-        nominal, metodePembayaran, catatanPenolakan, tanggalVerifikasi,
-        totalTagihan, totalDibayar
-      FROM Pendaftar
-      WHERE ${whereClause}
-      ORDER BY createdAt DESC
-    `);
+    const pendaftarList = await prisma.pendaftar.findMany({
+      where: whereCondition,
+      select: {
+        id: true, nama: true, noPendaftaran: true, jenjang: true, jenisKelamin: true,
+        statusPembayaran: true, buktiPembayaran: true, createdAt: true,
+        nominal: true, metodePembayaran: true, catatanPenolakan: true, tanggalVerifikasi: true,
+        totalTagihan: true, totalDibayar: true
+      },
+      orderBy: { createdAt: 'desc' }
+    });
 
     if (!pendaftarList || pendaftarList.length === 0) {
       return NextResponse.json([]);
     }
 
-    // Ambil semua riwayat cicilan
-    const ids = pendaftarList.map((p: any) => `'${p.id}'`).join(",");
-    const riwayatList: any[] = ids.length > 0
-      ? await prisma.$queryRawUnsafe(`
-          SELECT id, pendaftarId, nomorCicilan, nominal, metodePembayaran,
-                 buktiPembayaran, statusPembayaran, catatanPenolakan, catatan, tanggalVerifikasi, createdAt
-          FROM RiwayatPembayaran
-          WHERE pendaftarId IN (${ids})
-          ORDER BY nomorCicilan ASC
-        `)
-      : [];
+    const ids = pendaftarList.map(p => p.id);
 
-    // Ambil semua biaya pendidikan sekali (efisiensi — 1 query untuk semua rows)
-    let biayaList: any[] = [];
-    try {
-      biayaList = await prisma.$queryRawUnsafe(
-        `SELECT tkLk, tkPr, sdLk, sdPr, smpLk, smpPr, smaLk, smaPr FROM BiayaPendidikan`
-      ) as any[];
-    } catch { /* biayaList stays [] */ }
+    // 2. Ambil riwayat cicilan
+    const riwayatList = await prisma.riwayatPembayaran.findMany({
+      where: { pendaftarId: { in: ids } },
+      orderBy: { nomorCicilan: 'asc' }
+    });
+
+    // 3. Ambil biaya pendidikan
+    const biayaList = await prisma.biayaPendidikan.findMany({
+      select: { tkLk: true, tkPr: true, sdLk: true, sdPr: true, smpLk: true, smpPr: true, smaLk: true, smaPr: true }
+    }).catch(() => []);
 
     // Gabungkan data
     const result = pendaftarList.map((p: any) => {

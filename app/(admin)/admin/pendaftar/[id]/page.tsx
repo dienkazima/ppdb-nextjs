@@ -11,6 +11,11 @@ export default async function DetailPendaftar({
 
   const data = await prisma.pendaftar.findUnique({
     where: { id },
+    include: {
+      riwayatPembayaran: {
+        orderBy: { nomorCicilan: "asc" }
+      }
+    }
   });
 
   if (!data) return notFound();

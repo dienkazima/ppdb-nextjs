@@ -19,7 +19,6 @@ export async function POST(req: Request) {
     });
     const nomorCicilanBaru = (existingRiwayat._max.nomorCicilan || 0) + 1;
 
-    // Gunakan executeRawUnsafe untuk insert, menghindari error pada Prisma Client yang belum di-generate
     const crypto = require("crypto");
     const newId = "man_" + crypto.randomUUID().replace(/-/g, "");
 

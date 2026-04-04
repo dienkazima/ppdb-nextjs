@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
-
-const prisma = new PrismaClient() as any;
 
 const MODELS: Record<string, string> = {
   "alur": "alurPendaftaran",
@@ -22,7 +20,7 @@ export async function PUT(
 
   try {
     const json = await req.json();
-    const data = await prisma[modelName].update({
+    const data = await (prisma as any)[modelName].update({
       where: { id },
       data: json,
     });
@@ -41,7 +39,7 @@ export async function DELETE(
   if (!modelName) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   try {
-    await prisma[modelName].delete({ where: { id } });
+    await (prisma as any)[modelName].delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: "Failed to delete data", details: error.message }, { status: 500 });

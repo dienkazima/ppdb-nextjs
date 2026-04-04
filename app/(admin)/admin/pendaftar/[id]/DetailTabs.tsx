@@ -310,45 +310,157 @@ export default function DetailTabs({ data }: { data: any }) {
                 </div>
                 Informasi Tagihan & Pembayaran
               </h3>
-              
+
+              {/* Status + Tombol Verifikasi Lunas */}
               <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
-                <div>
-                  <p className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-1">Status Pembayaran</p>
-                  <div className="flex items-center gap-2">
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-bold border ${data.statusPembayaran === 'Lunas' ? 'bg-green-100 text-green-700 border-green-200' : data.statusPembayaran === 'Menunggu Verifikasi' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' : 'bg-red-100 text-red-700 border-red-200'}`}>
+                <div className="flex flex-wrap gap-6 items-center">
+                  <div>
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Status Pembayaran</p>
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-bold border ${
+                      data.statusPembayaran === "Lunas" ? "bg-green-100 text-green-700 border-green-200" :
+                      data.statusPembayaran === "Menunggu Verifikasi" ? "bg-yellow-100 text-yellow-700 border-yellow-200" :
+                      data.statusPembayaran === "Cicilan" ? "bg-blue-100 text-blue-700 border-blue-200" :
+                      "bg-slate-100 text-slate-600 border-slate-200"
+                    }`}>
                       {data.statusPembayaran || "Belum Bayar"}
                     </span>
                   </div>
+                  {data.totalTagihan && (
+                    <div>
+                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Total Tagihan</p>
+                      <p className="text-base font-bold text-slate-800">
+                        Rp {Number(data.totalTagihan).toLocaleString("id-ID")}
+                      </p>
+                    </div>
+                  )}
+                  {data.totalDibayar != null && (
+                    <div>
+                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Sudah Dibayar</p>
+                      <p className="text-base font-bold text-emerald-700">
+                        Rp {Number(data.totalDibayar).toLocaleString("id-ID")}
+                      </p>
+                    </div>
+                  )}
                 </div>
-
                 {data.statusPembayaran !== "Lunas" && (
-                   <button
-                   onClick={async () => {
-                     const res = await Swal.fire({
-                       title: "Konfirmasi Pelunasan",
-                       text: "Ubah status menjadi Lunas?",
-                       icon: "question",
-                       showCancelButton: true,
-                       confirmButtonText: "Ya, Lunas!"
-                     });
-                     if (res.isConfirmed) {
-                       await fetch(`/api/pendaftar/${data.id}`, {
-                         method: "PUT",
-                         headers: { "Content-Type": "application/json" },
-                         body: JSON.stringify({ statusPembayaran: "Lunas" })
-                       });
-                       location.reload();
-                     }
-                   }}
-                   className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-sm transition"
-                 >
-                   Verifikasi Lunas
-                 </button>
+                  <button
+                    onClick={async () => {
+                      const res = await Swal.fire({
+                        title: "Konfirmasi Pelunasan",
+                        text: "Ubah status menjadi Lunas?",
+                        icon: "question",
+                        showCancelButton: true,
+                        confirmButtonText: "Ya, Lunas!"
+                      });
+                      if (res.isConfirmed) {
+                        await fetch(`/api/pendaftar/${data.id}`, {
+                          method: "PUT",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ statusPembayaran: "Lunas" })
+                        });
+                        location.reload();
+                      }
+                    }}
+                    className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-sm transition"
+                  >
+                    Verifikasi Lunas
+                  </button>
                 )}
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6 mt-4">
-                <Document label="Bukti Transfer / Pembayaran" file={data.buktiPembayaran} />
+              {/* Riwayat Cicilan */}
+              <div>
+                <p className="text-sm font-bold text-slate-700 mb-3">
+                  Riwayat Cicilan ({(data.riwayatPembayaran || []).length}x)
+                </p>
+                {(!data.riwayatPembayaran || data.riwayatPembayaran.length === 0) ? (
+                  <div className="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-400 text-sm">
+                    Belum ada riwayat pembayaran
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {data.riwayatPembayaran.map((r: any, idx: number) => (
+                      <div
+                        key={r.id}
+                        className={`rounded-2xl border p-5 space-y-3 ${
+                          r.statusPembayaran === "Diverifikasi" ? "border-emerald-200 bg-emerald-50/40" :
+                          r.statusPembayaran === "Ditolak" ? "border-red-200 bg-red-50/40" :
+                          "border-amber-200 bg-amber-50/40"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="w-7 h-7 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center text-xs font-extrabold">
+                              {r.nomorCicilan}
+                            </span>
+                            <span className="text-sm font-bold text-slate-700">
+                              Cicilan ke-{r.nomorCicilan}
+                            </span>
+                          </div>
+                          <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${
+                            r.statusPembayaran === "Diverifikasi" ? "bg-emerald-100 text-emerald-700 border-emerald-200" :
+                            r.statusPembayaran === "Ditolak" ? "bg-red-100 text-red-700 border-red-200" :
+                            "bg-amber-100 text-amber-700 border-amber-200"
+                          }`}>
+                            {r.statusPembayaran}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+                          <div>
+                            <p className="text-slate-400 font-semibold mb-0.5">Nominal</p>
+                            <p className="text-slate-800 font-bold">
+                              Rp {Number(r.nominal || 0).toLocaleString("id-ID")}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-slate-400 font-semibold mb-0.5">Metode</p>
+                            <p className="text-slate-700 font-semibold">{r.metodePembayaran || "-"}</p>
+                          </div>
+                          <div>
+                            <p className="text-slate-400 font-semibold mb-0.5">Tanggal Upload</p>
+                            <p className="text-slate-700 font-semibold">
+                              {r.createdAt ? new Date(r.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }) : "-"}
+                            </p>
+                          </div>
+                          {r.tanggalVerifikasi && (
+                            <div>
+                              <p className="text-slate-400 font-semibold mb-0.5">Tanggal Verifikasi</p>
+                              <p className="text-slate-700 font-semibold">
+                                {new Date(r.tanggalVerifikasi).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
+                              </p>
+                            </div>
+                          )}
+                          {r.catatan && (
+                            <div className="col-span-2">
+                              <p className="text-slate-400 font-semibold mb-0.5">Catatan</p>
+                              <p className="text-slate-700 font-semibold">{r.catatan}</p>
+                            </div>
+                          )}
+                          {r.catatanPenolakan && (
+                            <div className="col-span-2">
+                              <p className="text-red-400 font-semibold mb-0.5">Alasan Penolakan</p>
+                              <p className="text-red-700 font-semibold">{r.catatanPenolakan}</p>
+                            </div>
+                          )}
+                        </div>
+
+                        {r.buktiPembayaran && (
+                          <div className="pt-2 border-t border-slate-200/60">
+                            <a
+                              href={r.buktiPembayaran}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 text-xs px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-xl font-bold transition-colors border border-blue-100 hover:border-transparent"
+                            >
+                              <FileText size={14} /> Lihat Bukti Transfer
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}

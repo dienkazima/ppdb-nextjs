@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
-
-const prisma = new PrismaClient() as any;
 
 const MODEL_MAP: Record<string, string> = {
   misi: "misiSekolah",
@@ -20,7 +18,7 @@ export async function PUT(
 
   try {
     const json = await req.json();
-    const data = await prisma[model].update({ where: { id }, data: json });
+    const data = await (prisma as any)[model].update({ where: { id }, data: json });
     return NextResponse.json(data);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -36,7 +34,7 @@ export async function DELETE(
   if (!model) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   try {
-    await prisma[model].delete({ where: { id } });
+    await (prisma as any)[model].delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
