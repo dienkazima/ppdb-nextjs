@@ -33,7 +33,7 @@ export async function POST(req: Request) {
 
     if (error) {
       console.error("Supabase Upload Error:", error);
-      return NextResponse.json({ error: "Gagal upload ke cloud storage" }, { status: 500 });
+      return NextResponse.json({ error: "Supabase Error: " + error.message }, { status: 500 });
     }
 
     // Dapatkan Public URL
@@ -44,8 +44,8 @@ export async function POST(req: Request) {
     return NextResponse.json({
       filePath: publicUrlData.publicUrl,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("UPLOAD ERROR:", error);
-    return NextResponse.json({ error: "Upload gagal" }, { status: 500 });
+    return NextResponse.json({ error: "Server Error: " + (error?.message || "Unknown") }, { status: 500 });
   }
 }

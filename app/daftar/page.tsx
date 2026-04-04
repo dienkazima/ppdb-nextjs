@@ -318,8 +318,8 @@ export default function Daftar() {
 
           setErrors((prev: any) => ({ ...prev, [name]: "" }));
           setStep3Errors((prev: any) => ({ ...prev, [name]: "" }));
-        } catch {
-          alert("Upload gagal");
+        } catch (err: any) {
+          alert(err.message || "Upload gagal");
           setFiles((prev) => ({
             ...prev,
             [name]: { file: null, loading: false, success: false },
