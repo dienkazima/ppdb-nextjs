@@ -14,51 +14,49 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     // Ambil riwayat untuk dapatkan pendaftarId
-    const riwayatRows: any[] = await prisma.$queryRawUnsafe(
-      `SELECT id, pendaftarId, nominal FROM RiwayatPembayaran WHERE id = ?`,
-      riwayatId
-    );
-    if (!riwayatRows || riwayatRows.length === 0) {
+    const riwayat = await prisma.riwayatPembayaran.findUnique({
+      where: { id: riwayatId },
+      select: { id: true, pendaftarId: true, nominal: true }
+    });
+    if (!riwayat) {
       return NextResponse.json({ error: "Data cicilan tidak ditemukan" }, { status: 404 });
     }
-    const riwayat = riwayatRows[0];
     const pendaftarId = riwayat.pendaftarId;
 
     const now = new Date().toISOString();
 
     // Update status cicilan ini
     if (aksi === "VERIFIKASI") {
-      await prisma.$executeRawUnsafe(
-        `UPDATE RiwayatPembayaran SET statusPembayaran = 'Diverifikasi', tanggalVerifikasi = ? WHERE id = ?`,
-        now, riwayatId
-      );
+      await prisma.riwayatPembayaran.update({
+        where: { id: riwayatId },
+        data: { statusPembayaran: 'Diverifikasi', tanggalVerifikasi: now }
+      });
     } else {
-      await prisma.$executeRawUnsafe(
-        `UPDATE RiwayatPembayaran SET statusPembayaran = 'Ditolak', catatanPenolakan = ? WHERE id = ?`,
-        catatan || "", riwayatId
-      );
+      await prisma.riwayatPembayaran.update({
+        where: { id: riwayatId },
+        data: { statusPembayaran: 'Ditolak', catatanPenolakan: catatan || "" }
+      });
     }
 
     // Hitung ulang totalDibayar dari semua cicilan yang Diverifikasi
-    const verifiedRows: any[] = await prisma.$queryRawUnsafe(
-      `SELECT SUM(nominal) as total FROM RiwayatPembayaran WHERE pendaftarId = ? AND statusPembayaran = 'Diverifikasi'`,
-      pendaftarId
-    );
-    const totalDibayar = Number(verifiedRows[0]?.total || 0);
+    const verifiedAgg = await prisma.riwayatPembayaran.aggregate({
+      where: { pendaftarId, statusPembayaran: 'Diverifikasi' },
+      _sum: { nominal: true }
+    });
+    const totalDibayar = verifiedAgg._sum.nominal || 0;
 
     // Ambil totalTagihan pendaftar
-    const pendaftarRows: any[] = await prisma.$queryRawUnsafe(
-      `SELECT totalTagihan, statusPembayaran FROM Pendaftar WHERE id = ?`,
-      pendaftarId
-    );
-    const totalTagihan = pendaftarRows[0]?.totalTagihan ? Number(pendaftarRows[0].totalTagihan) : null;
+    const pendaftar = await prisma.pendaftar.findUnique({
+      where: { id: pendaftarId },
+      select: { totalTagihan: true, statusPembayaran: true }
+    });
+    const totalTagihan = pendaftar?.totalTagihan || null;
 
     // Cek apakah masih ada cicilan yang menunggu verifikasi
-    const menungguRows: any[] = await prisma.$queryRawUnsafe(
-      `SELECT COUNT(*) as cnt FROM RiwayatPembayaran WHERE pendaftarId = ? AND statusPembayaran = 'Menunggu Verifikasi'`,
-      pendaftarId
-    );
-    const masihAdaMenunggu = Number(menungguRows[0]?.cnt || 0) > 0;
+    const menungguAgg = await prisma.riwayatPembayaran.count({
+      where: { pendaftarId, statusPembayaran: 'Menunggu Verifikasi' }
+    });
+    const masihAdaMenunggu = menungguAgg > 0;
 
     // Tentukan status baru Pendaftar
     let statusBaru: string;
@@ -73,18 +71,14 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     // Update Pendaftar
-    await prisma.$executeRawUnsafe(
-      `UPDATE Pendaftar SET statusPembayaran = ?, totalDibayar = ? WHERE id = ?`,
-      statusBaru, totalDibayar, pendaftarId
-    );
-
-    // Jika Lunas, simpan tanggalVerifikasi di Pendaftar
-    if (statusBaru === "Lunas") {
-      await prisma.$executeRawUnsafe(
-        `UPDATE Pendaftar SET tanggalVerifikasi = ? WHERE id = ?`,
-        now, pendaftarId
-      );
-    }
+    await prisma.pendaftar.update({
+      where: { id: pendaftarId },
+      data: {
+        statusPembayaran: statusBaru,
+        totalDibayar,
+        ...(statusBaru === "Lunas" && { tanggalVerifikasi: now })
+      }
+    });
 
     return NextResponse.json({
       message: aksi === "VERIFIKASI" ? "Cicilan berhasil diverifikasi" : "Cicilan ditolak",

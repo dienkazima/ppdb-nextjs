@@ -23,17 +23,18 @@ export async function POST(req: Request) {
     const crypto = require("crypto");
     const newId = "man_" + crypto.randomUUID().replace(/-/g, "");
 
-    await prisma.$executeRawUnsafe(
-      `INSERT INTO RiwayatPembayaran (id, pendaftarId, nomorCicilan, nominal, metodePembayaran, statusPembayaran, tanggalVerifikasi, catatan) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      newId,
-      pendaftarId,
-      nomorCicilanBaru,
-      Number(nominal),
-      "Offline",
-      "Diverifikasi",
-      now,
-      catatan || null
-    );
+    await prisma.riwayatPembayaran.create({
+      data: {
+        id: newId,
+        pendaftarId,
+        nomorCicilan: nomorCicilanBaru,
+        nominal: Number(nominal),
+        metodePembayaran: "Offline",
+        statusPembayaran: "Diverifikasi",
+        tanggalVerifikasi: now,
+        catatan: catatan || null
+      }
+    });
 
     // Hitung ulang total dibayar
     const verifiedRows = await prisma.riwayatPembayaran.aggregate({

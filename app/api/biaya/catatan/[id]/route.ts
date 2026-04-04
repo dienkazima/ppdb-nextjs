@@ -12,13 +12,13 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
 
     const now = new Date().toISOString();
 
-    await prisma.$executeRawUnsafe(
-      `UPDATE CatatanBiayaPendidikan SET isi = ?, urutan = ?, updatedAt = ? WHERE id = ?`,
-      isi,
-      Number(urutan),
-      now,
-      id
-    );
+    await prisma.catatanBiayaPendidikan.update({
+      where: { id },
+      data: {
+        isi,
+        urutan: Number(urutan)
+      }
+    });
 
     return NextResponse.json({ message: "Catatan berhasil diperbarui" });
   } catch (error) {
@@ -31,10 +31,9 @@ export async function DELETE(req: Request, context: { params: Promise<{ id: stri
   try {
     const { id } = await context.params;
 
-    await prisma.$executeRawUnsafe(
-      `DELETE FROM CatatanBiayaPendidikan WHERE id = ?`,
-      id
-    );
+    await prisma.catatanBiayaPendidikan.delete({
+      where: { id }
+    });
 
     return NextResponse.json({ message: "Catatan berhasil dihapus" });
   } catch (error) {

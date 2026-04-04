@@ -4,10 +4,9 @@ import { NextResponse } from "next/server";
 // Helper: Hitung total tagihan dari BiayaPendidikan berdasarkan jenjang + jenis kelamin
 async function hitungTotalTagihan(jenjang: string, jenisKelamin: string): Promise<number | null> {
   try {
-    const biayaList: any[] = await prisma.$queryRawUnsafe(`
-      SELECT jenisPembayaran, tkLk, tkPr, sdLk, sdPr, smpLk, smpPr, smaLk, smaPr
-      FROM BiayaPendidikan
-    `);
+    const biayaList = await prisma.biayaPendidikan.findMany({
+      select: { jenisPembayaran: true, tkLk: true, tkPr: true, sdLk: true, sdPr: true, smpLk: true, smpPr: true, smaLk: true, smaPr: true }
+    });
 
     if (!biayaList || biayaList.length === 0) return null;
 
@@ -26,7 +25,7 @@ async function hitungTotalTagihan(jenjang: string, jenisKelamin: string): Promis
 
     let total = 0;
     for (const b of biayaList) {
-      const nilai = b[fieldName];
+      const nilai = (b as any)[fieldName];
       if (nilai) total += Number(nilai);
     }
     return total > 0 ? total : null;
@@ -52,29 +51,34 @@ export async function POST(req: Request, { params }: { params: Promise<{ idPenda
     const metodePembayaran = body.metodePembayaran || null;
 
     // Ambil data pendaftar untuk hitung totalTagihan
-    const pendaftarRows: any[] = await prisma.$queryRawUnsafe(
-      `SELECT id, jenjang, jenisKelamin, statusPembayaran, totalTagihan FROM Pendaftar WHERE id = ?`,
-      idPendaftar
-    );
-    if (!pendaftarRows || pendaftarRows.length === 0) {
+    const pendaftar = await prisma.pendaftar.findUnique({
+      where: { id: idPendaftar },
+      select: { id: true, jenjang: true, jenisKelamin: true, statusPembayaran: true, totalTagihan: true }
+    });
+
+    if (!pendaftar) {
       return NextResponse.json({ error: "Pendaftar tidak ditemukan" }, { status: 404 });
     }
-    const pendaftar = pendaftarRows[0];
 
     // Hitung nomor cicilan (count existing riwayat + 1)
-    const countRows: any[] = await prisma.$queryRawUnsafe(
-      `SELECT COUNT(*) as cnt FROM RiwayatPembayaran WHERE pendaftarId = ?`,
-      idPendaftar
-    );
-    const nomorCicilan = (Number(countRows[0]?.cnt) || 0) + 1;
+    const countRiwayat = await prisma.riwayatPembayaran.count({
+      where: { pendaftarId: idPendaftar }
+    });
+    const nomorCicilan = countRiwayat + 1;
 
     // Insert record RiwayatPembayaran baru
     const riwayatId = `rp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-    await prisma.$executeRawUnsafe(
-      `INSERT INTO RiwayatPembayaran (id, pendaftarId, nomorCicilan, nominal, metodePembayaran, buktiPembayaran, statusPembayaran, createdAt)
-       VALUES (?, ?, ?, ?, ?, ?, 'Menunggu Verifikasi', datetime('now'))`,
-      riwayatId, idPendaftar, nomorCicilan, nominal, metodePembayaran, body.buktiPembayaran
-    );
+    await prisma.riwayatPembayaran.create({
+      data: {
+        id: riwayatId,
+        pendaftarId: idPendaftar,
+        nomorCicilan,
+        nominal,
+        metodePembayaran,
+        buktiPembayaran: body.buktiPembayaran,
+        statusPembayaran: 'Menunggu Verifikasi',
+      }
+    });
 
     // Hitung totalTagihan otomatis dari BiayaPendidikan (hanya jika belum ada)
     let totalTagihan = pendaftar.totalTagihan ? Number(pendaftar.totalTagihan) : null;
@@ -83,21 +87,20 @@ export async function POST(req: Request, { params }: { params: Promise<{ idPenda
     }
 
     // Update Pendaftar: statusPembayaran = "Menunggu Verifikasi", simpan totalTagihan, update last upload info
-    const updateFields = totalTagihan
-      ? `buktiPembayaran = ?, statusPembayaran = 'Menunggu Verifikasi', nominal = ?, metodePembayaran = ?, totalTagihan = ?`
-      : `buktiPembayaran = ?, statusPembayaran = 'Menunggu Verifikasi', nominal = ?, metodePembayaran = ?`;
-
+    const updateData: any = {
+      buktiPembayaran: body.buktiPembayaran,
+      statusPembayaran: 'Menunggu Verifikasi',
+      nominal,
+      metodePembayaran,
+    };
     if (totalTagihan) {
-      await prisma.$executeRawUnsafe(
-        `UPDATE Pendaftar SET ${updateFields} WHERE id = ?`,
-        body.buktiPembayaran, nominal, metodePembayaran, totalTagihan, idPendaftar
-      );
-    } else {
-      await prisma.$executeRawUnsafe(
-        `UPDATE Pendaftar SET ${updateFields} WHERE id = ?`,
-        body.buktiPembayaran, nominal, metodePembayaran, idPendaftar
-      );
+      updateData.totalTagihan = totalTagihan;
     }
+
+    await prisma.pendaftar.update({
+      where: { id: idPendaftar },
+      data: updateData
+    });
 
     return NextResponse.json({
       message: `Cicilan ke-${nomorCicilan} berhasil diupload`,

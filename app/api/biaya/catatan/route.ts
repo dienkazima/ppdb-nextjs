@@ -3,9 +3,9 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const data: any[] = await prisma.$queryRawUnsafe(`
-      SELECT * FROM CatatanBiayaPendidikan ORDER BY urutan ASC
-    `);
+    const data = await prisma.catatanBiayaPendidikan.findMany({
+      orderBy: { urutan: 'asc' }
+    });
     return NextResponse.json(data);
   } catch (error) {
     console.error("GET CATATAN BIAYA ERROR:", error);
@@ -23,27 +23,21 @@ export async function POST(req: Request) {
     // Auto calculate urutan if not provided
     let newUrutan = urutan;
     if (urutan === undefined || urutan === null) {
-      const lastItem: any[] = await prisma.$queryRawUnsafe(`
-        SELECT urutan FROM CatatanBiayaPendidikan ORDER BY urutan DESC LIMIT 1
-      `);
-      newUrutan = lastItem.length > 0 ? Number(lastItem[0].urutan) + 1 : 1;
+      const lastItem = await prisma.catatanBiayaPendidikan.findFirst({
+        orderBy: { urutan: 'desc' },
+        select: { urutan: true }
+      });
+      newUrutan = lastItem ? Number(lastItem.urutan) + 1 : 1;
     }
 
-    // Use executeRawUnsafe to circumvent schema mismatch during dev server
-    const crypto = require("crypto");
-    const newId = "cat_" + crypto.randomUUID().replace(/-/g, "");
-    const now = new Date().toISOString();
+    const catatanBaru = await prisma.catatanBiayaPendidikan.create({
+      data: {
+        isi,
+        urutan: Number(newUrutan)
+      }
+    });
 
-    await prisma.$executeRawUnsafe(
-      `INSERT INTO CatatanBiayaPendidikan (id, isi, urutan, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)`,
-      newId,
-      isi,
-      Number(newUrutan),
-      now,
-      now
-    );
-
-    return NextResponse.json({ message: "Catatan berhasil ditambahkan", id: newId });
+    return NextResponse.json({ message: "Catatan berhasil ditambahkan", id: catatanBaru.id });
   } catch (error) {
     console.error("POST CATATAN BIAYA ERROR:", error);
     return NextResponse.json({ error: "Gagal menambah catatan biaya" }, { status: 500 });
