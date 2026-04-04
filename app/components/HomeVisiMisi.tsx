@@ -30,8 +30,8 @@ export default function HomeVisiMisi() {
   if (loading) return null;
   if (!data.visi && data.misi.length === 0 && data.tujuan.length === 0) return null;
 
-  const displayedMisi = showAllMisi ? data.misi : data.misi.slice(0, 3);
-  const displayedTujuan = showAllTujuan ? data.tujuan : data.tujuan.slice(0, 3);
+  const displayedMisi = showAllMisi ? data.misi : data.misi.slice(0, 5);
+  const displayedTujuan = showAllTujuan ? data.tujuan : data.tujuan.slice(0, 5);
 
   return (
     <section id="visi-misi" className="bg-white py-14 sm:py-20 md:py-28 px-4 sm:px-6 scroll-mt-20">
@@ -88,14 +88,14 @@ export default function HomeVisiMisi() {
                     <span className="mt-0.5 flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-br from-[#22C55E] to-[#16A34A] flex items-center justify-center text-white text-xs font-bold shadow-sm">
                       {idx + 1}
                     </span>
-                    <p className={`text-gray-700 text-sm sm:text-base leading-relaxed font-medium text-left transition-all duration-300 ${!showAllMisi ? 'line-clamp-3' : ''}`}>
+                    <p className={`text-gray-700 text-sm sm:text-base leading-relaxed font-medium text-left break-words transition-all duration-300 ${!showAllMisi ? 'line-clamp-3' : ''}`}>
                       {item.teks}
                     </p>
                   </li>
                 ))}
               </ul>
               
-              {data.misi.length > 3 && (
+              {data.misi.length > 5 && (
                 <button 
                   onClick={() => setShowAllMisi(!showAllMisi)}
                   className="mt-6 flex items-center gap-2 text-[#16A34A] font-bold text-sm hover:text-[#15803D] transition-colors bg-white/50 px-4 py-2 rounded-xl self-start"
@@ -103,7 +103,7 @@ export default function HomeVisiMisi() {
                   {showAllMisi ? (
                     <><ChevronUp size={18} /> Tampilkan Lebih Sedikit</>
                   ) : (
-                    <><ChevronDown size={18} /> Tampilkan {data.misi.length - 3} Misi Lainnya</>
+                    <><ChevronDown size={18} /> Tampilkan {data.misi.length - 5} Misi Lainnya</>
                   )}
                 </button>
               )}
@@ -121,14 +121,14 @@ export default function HomeVisiMisi() {
                 {displayedTujuan.map((item) => (
                   <li key={item.id} className="flex items-start gap-4 group/item">
                     <span className="mt-2.5 flex-shrink-0 w-2 h-2 rounded-full bg-yellow-400"></span>
-                    <p className={`text-gray-700 text-sm sm:text-base leading-relaxed font-medium text-left transition-all duration-300 ${!showAllTujuan ? 'line-clamp-3' : ''}`}>
+                    <p className={`text-gray-700 text-sm sm:text-base leading-relaxed font-medium text-left break-words transition-all duration-300 ${!showAllTujuan ? 'line-clamp-3' : ''}`}>
                       {item.teks}
                     </p>
                   </li>
                 ))}
               </ul>
               
-              {data.tujuan.length > 3 && (
+              {data.tujuan.length > 5 && (
                 <button 
                   onClick={() => setShowAllTujuan(!showAllTujuan)}
                   className="mt-6 flex items-center gap-2 text-orange-500 font-bold text-sm hover:text-orange-600 transition-colors bg-orange-50 px-4 py-2 rounded-xl self-start"
@@ -136,7 +136,7 @@ export default function HomeVisiMisi() {
                   {showAllTujuan ? (
                     <><ChevronUp size={18} /> Tampilkan Lebih Sedikit</>
                   ) : (
-                    <><ChevronDown size={18} /> Tampilkan {data.tujuan.length - 3} Tujuan Lainnya</>
+                    <><ChevronDown size={18} /> Tampilkan {data.tujuan.length - 5} Tujuan Lainnya</>
                   )}
                 </button>
               )}
