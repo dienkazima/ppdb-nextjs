@@ -102,7 +102,7 @@ export default function HomeVisiMisi() {
                     <span className="mt-0.5 flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-br from-[#22C55E] to-[#16A34A] flex items-center justify-center text-white text-xs font-bold shadow-sm">
                       {idx + 1}
                     </span>
-                    <p className={`flex-1 min-w-0 text-gray-700 text-sm sm:text-base leading-relaxed font-medium text-left break-words break-all transition-all duration-300 ${!showAllMisi ? 'line-clamp-3' : ''}`}>
+                    <p className={`flex-1 min-w-0 text-gray-700 text-sm sm:text-base leading-relaxed font-medium text-left whitespace-normal break-words transition-all duration-300 ${!showAllMisi ? 'line-clamp-3' : ''}`}>
                       {item.teks}
                     </p>
                   </li>
@@ -135,7 +135,7 @@ export default function HomeVisiMisi() {
                 {displayedTujuan.map((item) => (
                   <li key={item.id} className="flex items-start gap-4 group/item">
                     <span className="mt-2.5 flex-shrink-0 w-2 h-2 rounded-full bg-yellow-400"></span>
-                    <p className={`flex-1 min-w-0 text-gray-700 text-sm sm:text-base leading-relaxed font-medium text-left break-words break-all transition-all duration-300 ${!showAllTujuan ? 'line-clamp-3' : ''}`}>
+                    <p className={`flex-1 min-w-0 text-gray-700 text-sm sm:text-base leading-relaxed font-medium text-left whitespace-normal break-words transition-all duration-300 ${!showAllTujuan ? 'line-clamp-3' : ''}`}>
                       {item.teks}
                     </p>
                   </li>
