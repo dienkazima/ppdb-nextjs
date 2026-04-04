@@ -26,10 +26,10 @@ export async function POST(req: Request) {
     }
 
     if (file && file.size > 0) {
-      // Validasi ukuran maks 2MB
-      const MAX_SIZE = 2 * 1024 * 1024;
+      // Validasi ukuran maks 4MB (Batas aman payload Vercel Serverless adalah 4.5MB)
+      const MAX_SIZE = 4 * 1024 * 1024;
       if (file.size > MAX_SIZE) {
-        return NextResponse.json({ error: "Ukuran file maksimal 2MB" }, { status: 400 });
+        return NextResponse.json({ error: "Ukuran file maksimal 4MB (batas optimal Vercel)" }, { status: 400 });
       }
 
       const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;

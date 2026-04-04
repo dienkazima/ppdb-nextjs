@@ -315,7 +315,7 @@ export default function AdminGalleryPage() {
                       <div className="flex flex-col items-center justify-center pointer-events-none">
                         <UploadCloud size={32} className="text-blue-500 mb-2" />
                         <p className="text-sm font-bold text-slate-600">Klik untuk mencari file gambar</p>
-                        <p className="text-xs text-slate-400 mt-1">atau seret file ke area ini (maks 5MB)</p>
+                        <p className="text-xs text-slate-400 mt-1">atau seret file ke area ini (maks 4MB)</p>
                       </div>
                     </div>
                   ) : (
