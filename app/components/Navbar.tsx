@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import DaftarButton from "@/app/components/DaftarButton";
+import Image from "next/image";
 
 export default function Navbar() {
   const [bukaPendaftaran, setBukaPendaftaran] = useState(false);
@@ -118,12 +119,19 @@ export default function Navbar() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 md:py-4 flex items-center justify-between gap-4">
 
             {/* Logo + Nama */}
-            <Link href="/" onClick={(e) => handleNavClick(e, "beranda")} className="flex items-center gap-2.5 shrink-0">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-green-600 rounded-full flex items-center justify-center text-white font-bold shadow-md text-xs md:text-sm">
-                JSBS
+            <Link href="/" onClick={(e) => handleNavClick(e, "beranda")} className="flex items-center gap-2.5 shrink-0 group">
+              <div className="relative w-12 h-12 md:w-14 md:h-14 transition-all duration-300 group-hover:scale-110 group-hover:-rotate-3 drop-shadow-md">
+                <Image 
+                  src="/logo.png" 
+                  alt="Logo Yayasan Jamaluddin Suralaga" 
+                  fill
+                  className="object-contain drop-shadow-sm"
+                  sizes="(max-width: 768px) 48px, 56px"
+                  priority
+                />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-base md:text-xl font-bold text-green-700 tracking-wide leading-tight">
+                <h1 className="text-base md:text-xl font-bold text-green-700 tracking-wide leading-tight transition-colors duration-300 group-hover:text-green-800">
                   YAYASAN JAMALUDDIN SURALAGA
                 </h1>
               </div>
