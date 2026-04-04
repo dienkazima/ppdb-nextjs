@@ -17,6 +17,20 @@ export default function HomeVisiMisi() {
   const [showAllMisi, setShowAllMisi] = useState(false);
   const [showAllTujuan, setShowAllTujuan] = useState(false);
 
+  const handleToggleMisi = () => {
+    if (showAllMisi) {
+      setShowAllMisi(false);
+      setTimeout(() => document.getElementById("misi-card")?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+    } else setShowAllMisi(true);
+  };
+
+  const handleToggleTujuan = () => {
+    if (showAllTujuan) {
+      setShowAllTujuan(false);
+      setTimeout(() => document.getElementById("tujuan-card")?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+    } else setShowAllTujuan(true);
+  };
+
   useEffect(() => {
     fetch("/api/visi-misi")
       .then(res => res.json())
@@ -77,7 +91,7 @@ export default function HomeVisiMisi() {
           
           {/* MISI */}
           {data.misi.length > 0 && (
-            <div className="bg-[#F0FDF4] h-full flex flex-col rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-green-100">
+            <div id="misi-card" className="bg-[#F0FDF4] h-full flex flex-col rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-green-100 scroll-mt-24">
               <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-[#22C55E] to-[#16A34A] rounded-xl sm:rounded-2xl flex items-center justify-center mb-5 sm:mb-6 shadow-md shrink-0">
                 <ListChecks size={24} className="text-white" />
               </div>
@@ -88,7 +102,7 @@ export default function HomeVisiMisi() {
                     <span className="mt-0.5 flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-br from-[#22C55E] to-[#16A34A] flex items-center justify-center text-white text-xs font-bold shadow-sm">
                       {idx + 1}
                     </span>
-                    <p className={`text-gray-700 text-sm sm:text-base leading-relaxed font-medium text-left break-words transition-all duration-300 ${!showAllMisi ? 'line-clamp-3' : ''}`}>
+                    <p className={`flex-1 min-w-0 text-gray-700 text-sm sm:text-base leading-relaxed font-medium text-left break-words break-all transition-all duration-300 ${!showAllMisi ? 'line-clamp-3' : ''}`}>
                       {item.teks}
                     </p>
                   </li>
@@ -97,7 +111,7 @@ export default function HomeVisiMisi() {
               
               {data.misi.length > 5 && (
                 <button 
-                  onClick={() => setShowAllMisi(!showAllMisi)}
+                  onClick={handleToggleMisi}
                   className="mt-6 flex items-center gap-2 text-[#16A34A] font-bold text-sm hover:text-[#15803D] transition-colors bg-white/50 px-4 py-2 rounded-xl self-start"
                 >
                   {showAllMisi ? (
@@ -112,7 +126,7 @@ export default function HomeVisiMisi() {
 
           {/* TUJUAN */}
           {data.tujuan.length > 0 && (
-            <div className="bg-white h-full flex flex-col rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-200">
+            <div id="tujuan-card" className="bg-white h-full flex flex-col rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-200 scroll-mt-24">
               <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-xl sm:rounded-2xl flex items-center justify-center mb-5 sm:mb-6 shadow-md shrink-0">
                 <Target size={24} className="text-white" />
               </div>
@@ -121,7 +135,7 @@ export default function HomeVisiMisi() {
                 {displayedTujuan.map((item) => (
                   <li key={item.id} className="flex items-start gap-4 group/item">
                     <span className="mt-2.5 flex-shrink-0 w-2 h-2 rounded-full bg-yellow-400"></span>
-                    <p className={`text-gray-700 text-sm sm:text-base leading-relaxed font-medium text-left break-words transition-all duration-300 ${!showAllTujuan ? 'line-clamp-3' : ''}`}>
+                    <p className={`flex-1 min-w-0 text-gray-700 text-sm sm:text-base leading-relaxed font-medium text-left break-words break-all transition-all duration-300 ${!showAllTujuan ? 'line-clamp-3' : ''}`}>
                       {item.teks}
                     </p>
                   </li>
@@ -130,7 +144,7 @@ export default function HomeVisiMisi() {
               
               {data.tujuan.length > 5 && (
                 <button 
-                  onClick={() => setShowAllTujuan(!showAllTujuan)}
+                  onClick={handleToggleTujuan}
                   className="mt-6 flex items-center gap-2 text-orange-500 font-bold text-sm hover:text-orange-600 transition-colors bg-orange-50 px-4 py-2 rounded-xl self-start"
                 >
                   {showAllTujuan ? (
