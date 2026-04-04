@@ -46,20 +46,20 @@ export default function HomeVisiMisi() {
         </div>
 
         {/* 3-column grid: Visi | Misi | Tujuan */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 md:gap-8 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 md:gap-8 items-stretch">
 
           {/* VISI */}
           {data.visi && (
-            <div className="group relative bg-gradient-to-br from-[#14532D] to-[#16A34A] rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+            <div className="group relative h-full flex flex-col bg-gradient-to-br from-[#14532D] to-[#16A34A] rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
               <div className="absolute top-0 right-0 w-28 h-28 sm:w-32 sm:h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
               <div className="absolute bottom-0 left-0 w-20 h-20 sm:w-24 sm:h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
 
-              <div className="relative z-10">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/15 backdrop-blur-sm rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-sm border border-white/20">
+              <div className="relative z-10 flex flex-col h-full">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/15 backdrop-blur-sm rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-sm border border-white/20 shrink-0">
                   <Eye size={24} className="text-white" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-extrabold mb-4 sm:mb-5 text-white tracking-tight">Visi</h3>
-                <p className="text-green-50/90 text-sm sm:text-base leading-relaxed font-medium">
+                <h3 className="text-xl sm:text-2xl font-extrabold mb-4 sm:mb-5 text-white tracking-tight text-left">Visi</h3>
+                <p className="text-green-50/90 text-sm sm:text-base leading-relaxed font-medium text-left flex-1">
                   {data.visi.konten}
                 </p>
               </div>
@@ -68,18 +68,18 @@ export default function HomeVisiMisi() {
 
           {/* MISI */}
           {data.misi.length > 0 && (
-            <div className="bg-[#F0FDF4] rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.05)] hover:shadow-[0_14px_40px_rgba(22,163,74,0.1)] hover:-translate-y-1 transition-all duration-300 border border-green-100">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-[#22C55E] to-[#16A34A] rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-md">
+            <div className="bg-[#F0FDF4] h-full flex flex-col rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.05)] hover:shadow-[0_14px_40px_rgba(22,163,74,0.1)] hover:-translate-y-1 transition-all duration-300 border border-green-100">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-[#22C55E] to-[#16A34A] rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-md shrink-0">
                 <ListChecks size={24} className="text-white" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-extrabold text-[#111827] mb-4 sm:mb-6 tracking-tight">Misi</h3>
-              <ul className="space-y-3 sm:space-y-4">
+              <h3 className="text-xl sm:text-2xl font-extrabold text-[#111827] mb-4 sm:mb-6 tracking-tight text-left">Misi</h3>
+              <ul className="space-y-3 sm:space-y-4 flex-1 overflow-y-auto pr-1">
                 {data.misi.map((item, idx) => (
                   <li key={item.id} className="flex items-start gap-3 sm:gap-4 group/item">
                     <span className="mt-0.5 flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-br from-[#22C55E] to-[#16A34A] flex items-center justify-center text-white text-xs font-bold shadow-sm">
                       {idx + 1}
                     </span>
-                    <p className="text-gray-700 text-sm leading-relaxed font-medium group-hover/item:text-gray-900 transition-colors">
+                    <p className="text-gray-700 text-sm leading-relaxed font-medium group-hover/item:text-gray-900 transition-colors text-left">
                       {item.teks}
                     </p>
                   </li>
@@ -90,16 +90,16 @@ export default function HomeVisiMisi() {
 
           {/* TUJUAN */}
           {data.tujuan.length > 0 && (
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.05)] hover:shadow-[0_14px_40px_rgba(22,163,74,0.1)] hover:-translate-y-1 transition-all duration-300 border border-slate-100 md:col-span-2 lg:col-span-1">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-md">
+            <div className="bg-white h-full flex flex-col rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.05)] hover:shadow-[0_14px_40px_rgba(22,163,74,0.1)] hover:-translate-y-1 transition-all duration-300 border border-slate-100 md:col-span-2 lg:col-span-1">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-md shrink-0">
                 <Target size={24} className="text-white" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-extrabold text-[#111827] mb-4 sm:mb-6 tracking-tight">Tujuan</h3>
-              <ul className="space-y-3 sm:space-y-4">
+              <h3 className="text-xl sm:text-2xl font-extrabold text-[#111827] mb-4 sm:mb-6 tracking-tight text-left">Tujuan</h3>
+              <ul className="space-y-3 sm:space-y-4 flex-1 overflow-y-auto pr-1">
                 {data.tujuan.map((item) => (
                   <li key={item.id} className="flex items-start gap-3 sm:gap-4 group/item">
-                    <span className="mt-2 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-yellow-400 shrink-0"></span>
-                    <p className="text-gray-700 text-sm leading-relaxed font-medium group-hover/item:text-gray-900 transition-colors">
+                    <span className="mt-2 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-yellow-400"></span>
+                    <p className="text-gray-700 text-sm leading-relaxed font-medium group-hover/item:text-gray-900 transition-colors text-left">
                       {item.teks}
                     </p>
                   </li>

@@ -100,7 +100,7 @@ export default function TataTertibModal({ isOpen, onClose }: TataTertibModalProp
                       <span className="w-5 h-5 bg-[#16A34A] text-white rounded-full flex items-center justify-center text-[10px] font-black shrink-0 mt-0.5">
                         {idx + 1}
                       </span>
-                      <p className="text-slate-700 text-sm leading-relaxed">{item.teks}</p>
+                      <p className="text-slate-700 text-sm leading-relaxed text-left whitespace-pre-wrap flex-1">{item.teks}</p>
                     </li>
                   ))}
                 </ol>
