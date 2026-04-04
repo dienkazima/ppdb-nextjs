@@ -304,8 +304,8 @@ export default function Daftar() {
             body: formData,
           });
 
-          const result = await res.json();
-          if (!res.ok) throw new Error("Upload gagal");
+          const result = await res.json().catch(() => ({ error: "Gagal membaca response server (mungkin file terlalu besar)" }));
+          if (!res.ok) throw new Error(result.error || "Upload gagal dengan status: " + res.status);
 
           // ✅ Simpan filePath ke form state
           setForm((prev) => ({ ...prev, [name]: result.filePath }));
