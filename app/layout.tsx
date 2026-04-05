@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PPDB Yayasan Jamaluddin Suralaga",
+  title: "SPMB Yayasan Jamaluddin Suralaga",
   description: "Website Sistem Penerimaan Murid Baru",
   icons: {
     icon: "/logo.png",

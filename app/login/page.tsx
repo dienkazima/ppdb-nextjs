@@ -69,7 +69,7 @@ export default function LoginPage() {
         className="relative z-10 w-full max-w-md px-6"
       >
         <div className="backdrop-blur-2xl bg-slate-900/60 border border-slate-700/50 rounded-3xl shadow-2xl overflow-hidden relative group">
-          
+
           {/* Top Edge Highlight */}
           <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
 
@@ -88,7 +88,7 @@ export default function LoginPage() {
                 Administrator
               </h2>
               <p className="text-slate-400 text-sm">
-                Login untuk mengelola sistem PPDB
+                Login untuk mengelola sistem SPMB
               </p>
             </div>
 
@@ -137,11 +137,10 @@ export default function LoginPage() {
                       if (error) setError(false);
                     }}
                     disabled={loading}
-                    className={`block w-full pl-11 pr-12 py-3.5 bg-slate-800/50 border rounded-xl text-white placeholder-slate-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                      error
-                        ? "border-red-500/50 focus:ring-2 focus:ring-red-500/50 focus:border-red-500/50"
-                        : "border-slate-700/50 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
-                    }`}
+                    className={`block w-full pl-11 pr-12 py-3.5 bg-slate-800/50 border rounded-xl text-white placeholder-slate-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed ${error
+                      ? "border-red-500/50 focus:ring-2 focus:ring-red-500/50 focus:border-red-500/50"
+                      : "border-slate-700/50 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+                      }`}
                     placeholder="••••••••"
                     required
                   />
@@ -198,11 +197,11 @@ export default function LoginPage() {
               </div>
             </form>
           </div>
-          
+
           {/* Footer inside card */}
           <div className="bg-slate-900/80 py-4 px-8 border-t border-slate-700/50 text-center">
             <p className="text-xs text-slate-500 font-medium tracking-wide">
-              Sistem Informasi PPDB © {new Date().getFullYear()}
+              Sistem Informasi SPMB © {new Date().getFullYear()}
             </p>
           </div>
         </div>
