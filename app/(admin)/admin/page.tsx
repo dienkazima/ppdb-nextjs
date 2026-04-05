@@ -99,7 +99,7 @@ export default function AdminDashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
         <div>
           <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-500 mb-2">
-            Dashboard Admin
+            {user?.role === "PANITIA" ? "Dashboard Panitia" : "Dashboard Admin"}
           </h1>
           <p className="text-slate-500">Berikut adalah ringkasan data pendaftar hari ini.</p>
         </div>

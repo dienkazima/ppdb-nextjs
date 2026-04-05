@@ -311,7 +311,7 @@ export default function DetailTabs({ data }: { data: any }) {
                 Informasi Tagihan & Pembayaran
               </h3>
 
-              {/* Status + Tombol Verifikasi Lunas */}
+              {/* Status */}
               <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="flex flex-wrap gap-6 items-center">
                   <div>
@@ -342,30 +342,6 @@ export default function DetailTabs({ data }: { data: any }) {
                     </div>
                   )}
                 </div>
-                {data.statusPembayaran !== "Lunas" && (
-                  <button
-                    onClick={async () => {
-                      const res = await Swal.fire({
-                        title: "Konfirmasi Pelunasan",
-                        text: "Ubah status menjadi Lunas?",
-                        icon: "question",
-                        showCancelButton: true,
-                        confirmButtonText: "Ya, Lunas!"
-                      });
-                      if (res.isConfirmed) {
-                        await fetch(`/api/pendaftar/${data.id}`, {
-                          method: "PUT",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ statusPembayaran: "Lunas" })
-                        });
-                        location.reload();
-                      }
-                    }}
-                    className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-sm transition"
-                  >
-                    Verifikasi Lunas
-                  </button>
-                )}
               </div>
 
               {/* Riwayat Cicilan */}
