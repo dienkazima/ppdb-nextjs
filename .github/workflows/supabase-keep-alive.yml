@@ -16,18 +16,24 @@ jobs:
       - name: 📡 Ping Supabase REST API
         run: |
           echo "🔄 Mengirim request ke Supabase project ppdb-annur..."
-          
+
+          # Ping ke health endpoint Supabase
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
             -X GET "https://rwwpfkblybgiqgbdveqk.supabase.co/rest/v1/" \
             -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
-          
+
           echo "✅ Response HTTP Status: $RESPONSE"
-          
-          if [ "$RESPONSE" -ge 200 ] && [ "$RESPONSE" -lt 400 ]; then
-            echo "🎉 Supabase project aktif!"
+
+          # 200 = OK, 401 = project aktif tapi butuh auth (normal), 404 = endpoint tidak ditemukan (normal)
+          # Yang penting bukan 5xx (project mati/pause) atau 0 (tidak bisa konek)
+          if [ "$RESPONSE" -ge 200 ] && [ "$RESPONSE" -lt 500 ]; then
+            echo "🎉 Supabase project aktif! Project tidak akan di-pause."
+          elif [ "$RESPONSE" -eq 0 ]; then
+            echo "❌ Tidak dapat terhubung ke Supabase - project mungkin sudah di-pause!"
+            exit 1
           else
-            echo "⚠️  Unexpected response: $RESPONSE"
+            echo "⚠️  Server error response: $RESPONSE - perlu dicek!"
             exit 1
           fi
 
