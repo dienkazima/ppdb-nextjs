@@ -1,0 +1,38 @@
+name: 🔄 Supabase Keep Alive - ppdb-annur
+
+on:
+  schedule:
+    # Berjalan setiap 5 hari sekali pada pukul 00:00 UTC
+    - cron: '0 0 */5 * *'
+  # Bisa dijalankan manual dari GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    name: Ping Supabase Project
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📡 Ping Supabase REST API
+        run: |
+          echo "🔄 Mengirim request ke Supabase project ppdb-annur..."
+          
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "https://rwwpfkblybgiqgbdveqk.supabase.co/rest/v1/" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
+          
+          echo "✅ Response HTTP Status: $RESPONSE"
+          
+          if [ "$RESPONSE" -ge 200 ] && [ "$RESPONSE" -lt 400 ]; then
+            echo "🎉 Supabase project aktif!"
+          else
+            echo "⚠️  Unexpected response: $RESPONSE"
+            exit 1
+          fi
+
+      - name: 📊 Log Waktu Eksekusi
+        run: |
+          echo "⏰ Keep-alive berhasil dijalankan pada: $(date '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "📌 Project ID: rwwpfkblybgiqgbdveqk"
+          echo "🏢 Organisasi: dienkazima"
