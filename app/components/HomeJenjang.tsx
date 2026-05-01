@@ -37,7 +37,7 @@ const TABS = [
 const getSchoolName = (jenjangName: string) => {
   const j = (jenjangName || "").toLowerCase();
   if (j.includes("tk") || j.includes("paud")) return "TK ISLAM TERPADU AN-NUR SURALAGA";
-  if (j.includes("sd") || j.includes("mi")) return "SD AN-NUR SURALAGA";
+  if (j.includes("sd") || j.includes("mi")) return "SD ISLAM TERPADU SURALAGA";
   if (j.includes("smp") || j.includes("mts")) return "SMPS ISLAM TERPADU AN-NUR SURALAGA";
   if (j.includes("sma") || j.includes("ma")) return "SMAS ISLAM TERPADU AN-NUR SURALAGA";
   return "YAYASAN AN-NUR SURALAGA";
@@ -135,8 +135,8 @@ export default function HomeJenjang() {
                         key={jenjang.id}
                         onClick={() => toggle(jenjang.id)}
                         className={`w-full bg-white rounded-2xl p-5 sm:p-6 cursor-pointer transition-all duration-300 flex flex-col border-2 ${isActive
-                            ? "border-[#22C55E] shadow-lg shadow-green-500/10 -translate-y-1"
-                            : "border-transparent shadow-md hover:-translate-y-1 hover:shadow-lg hover:border-[#D1FAE5]"
+                          ? "border-[#22C55E] shadow-lg shadow-green-500/10 -translate-y-1"
+                          : "border-transparent shadow-md hover:-translate-y-1 hover:shadow-lg hover:border-[#D1FAE5]"
                           }`}
                       >
                         {/* Icon */}
@@ -151,8 +151,8 @@ export default function HomeJenjang() {
                         <button
                           onClick={(e) => { e.stopPropagation(); toggle(jenjang.id); }}
                           className={`self-start inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${isActive
-                              ? "bg-[#F0FDF4] text-[#16A34A] border border-[#22C55E]"
-                              : "bg-gradient-to-br from-[#16A34A] to-[#15803D] text-white shadow-sm hover:opacity-90"
+                            ? "bg-[#F0FDF4] text-[#16A34A] border border-[#22C55E]"
+                            : "bg-gradient-to-br from-[#16A34A] to-[#15803D] text-white shadow-sm hover:opacity-90"
                             }`}
                         >
                           {isActive ? "Tutup Detail" : "Lihat Detail"}
@@ -210,8 +210,8 @@ export default function HomeJenjang() {
                               key={tab.id}
                               onClick={() => setActiveTab(tab.id)}
                               className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap ${activeTab === tab.id
-                                  ? "bg-gradient-to-br from-[#22C55E] to-[#15803D] text-white shadow-md shadow-green-500/20"
-                                  : "bg-[#F3F4F6] text-[#4B5563] hover:bg-[#E5E7EB]"
+                                ? "bg-gradient-to-br from-[#22C55E] to-[#15803D] text-white shadow-md shadow-green-500/20"
+                                : "bg-[#F3F4F6] text-[#4B5563] hover:bg-[#E5E7EB]"
                                 }`}
                             >
                               {tab.icon} {tab.label}
