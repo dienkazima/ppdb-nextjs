@@ -8,7 +8,7 @@ import DaftarButton from "@/app/components/DaftarButton";
 import Image from "next/image";
 
 export default function Navbar() {
-  const [bukaPendaftaran, setBukaPendaftaran] = useState(false);
+  const [bukaPendaftaran, setBukaPendaftaran] = useState<boolean | null>(null);
   const pathname = usePathname();
   const [activeHash, setActiveHash] = useState("beranda");
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -178,11 +178,18 @@ export default function Navbar() {
 
         {/* TOP INFO BAR */}
         <div className="w-full bg-gray-100 border-t border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-1.5 flex items-center justify-end text-xs sm:text-sm text-gray-700">
-            <div className={`flex items-center gap-2 font-semibold ${bukaPendaftaran ? "text-green-600" : "text-red-500"}`}>
-              <span className={`w-2 h-2 rounded-full animate-pulse ${bukaPendaftaran ? "bg-green-500" : "bg-red-500"}`}></span>
-              {bukaPendaftaran ? "Pendaftaran Dibuka" : "Pendaftaran Ditutup"}
-            </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-1.5 flex items-center justify-end text-xs sm:text-sm text-gray-700 min-h-[34px]">
+            {bukaPendaftaran !== null ? (
+              <div className={`flex items-center gap-2 font-semibold ${bukaPendaftaran ? "text-green-600" : "text-red-500"}`}>
+                <span className={`w-2 h-2 rounded-full animate-pulse ${bukaPendaftaran ? "bg-green-500" : "bg-red-500"}`}></span>
+                {bukaPendaftaran ? "Pendaftaran Dibuka" : "Pendaftaran Ditutup"}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 font-semibold text-gray-400">
+                <span className="w-2 h-2 rounded-full bg-gray-300 animate-pulse"></span>
+                Memeriksa Status...
+              </div>
+            )}
           </div>
         </div>
 

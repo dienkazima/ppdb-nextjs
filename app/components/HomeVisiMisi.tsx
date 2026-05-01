@@ -33,9 +33,14 @@ export default function HomeVisiMisi() {
 
   useEffect(() => {
     fetch("/api/visi-misi")
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error("API error");
+        return res.json();
+      })
       .then(d => {
-        setData(d);
+        if (d.misi && d.tujuan) {
+          setData(d);
+        }
         setLoading(false);
       })
       .catch(() => setLoading(false));
