@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Navbar from "@/app/components/Navbar";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, ZoomIn, Loader2 } from "lucide-react";
-import Footer from "@/app/components/Footer";
+
 
 interface Gallery {
   id: string;
@@ -73,8 +73,7 @@ export default function GalleryPage() {
   }, [selectedImageIndex, galleryImages.length]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar />
+    <div className="bg-gray-50 w-full">
 
       {/* HEADER SECTION */}
       <section className="bg-green-700 text-white py-14 sm:py-16 md:py-24 px-4 sm:px-6 relative overflow-hidden">
@@ -228,7 +227,7 @@ export default function GalleryPage() {
         )}
       </AnimatePresence>
 
-      <Footer />
+
     </div>
   );
 }

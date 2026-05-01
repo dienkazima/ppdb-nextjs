@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
-import Navbar from "@/app/components/Navbar";
+
 import HomeJenjang from "@/app/components/HomeJenjang";
 import HomeVisiMisi from "@/app/components/HomeVisiMisi";
 import HomeYayasanInfo from "@/app/components/HomeYayasanInfo";
 import DaftarButton from "@/app/components/DaftarButton";
-import Footer from "@/app/components/Footer";
+
 import CekStatusModal from "@/app/components/CekStatusModal";
 
 export default function Home() {
@@ -51,7 +51,7 @@ export default function Home() {
 
   return (
     <>
-      <Navbar />
+
 
       <style dangerouslySetInnerHTML={{
         __html: `
@@ -147,7 +147,7 @@ export default function Home() {
       <HomeJenjang />
       <HomeVisiMisi />
       <HomeYayasanInfo />
-      <Footer />
+
 
       <CekStatusModal
         isOpen={isStatusModalOpen}

@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { ChevronDown, CalendarDays, HelpCircle, CheckCircle2, Loader2 } from "lucide-react";
-import Navbar from "@/app/components/Navbar";
+
 import DaftarButton from "@/app/components/DaftarButton";
-import Footer from "@/app/components/Footer";
+
 import * as LucideIcons from "lucide-react";
 
 const DynamicIcon = ({ name, className, size = 24 }: { name: string, className?: string, size?: number }) => {
@@ -49,8 +49,7 @@ export default function CaraDaftarPage() {
   const toggleFaq = (id: string) => setOpenFaq(openFaq === id ? null : id);
 
   return (
-    <div className="min-h-screen bg-[#F0FDF4] flex flex-col font-sans">
-      <Navbar />
+    <div className="bg-[#F0FDF4] w-full font-sans">
 
       {/* Hero Section */}
       <section className="relative pt-16 sm:pt-24 pb-24 sm:pb-32 md:pt-32 md:pb-40 px-4 sm:px-6 text-center bg-gradient-to-br from-[#14532D] via-[#166534] to-[#22C55E] overflow-hidden">
@@ -227,7 +226,7 @@ export default function CaraDaftarPage() {
         </div>
       </section>
 
-      <Footer />
+
     </div>
   );
 }
