@@ -79,7 +79,7 @@ export default function AdminSidebar() {
   const logout = async () => {
     localStorage.removeItem("isLogin");
     try { await fetch("/api/logout", { method: "POST" }); } catch (e) {}
-    router.push("/login");
+    router.push("/");
   };
 
   // Menus for Panitia are filtered out if they don't have access

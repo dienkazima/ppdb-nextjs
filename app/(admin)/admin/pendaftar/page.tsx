@@ -17,7 +17,7 @@ export default function AdminPage() {
   const router = useRouter();
   const logout = () => {
     localStorage.removeItem("isLogin");
-    router.push("/login");
+    router.push("/");
   };
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("Semua");
